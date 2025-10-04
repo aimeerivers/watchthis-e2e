@@ -36,9 +36,8 @@ services:
       NODE_ENV: development
 
       # Service URLs - using container names for internal communication
-      USER_SERVICE_URL: http://localhost:8583
-      SHARING_SERVICE_URL: http://localhost:8372
-      MEDIA_SERVICE_URL: http://localhost:7769
+      USER_SERVICE_URL: http://watchthis-user-service:8583
+      USER_SERVICE_PUBLIC_URL: http://localhost:8583
     networks:
       - watchthis-network
     depends_on:

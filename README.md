@@ -42,20 +42,17 @@ npm install
 npm run playwright:install
 
 # Start the WatchThis services test environment
-docker-compose up -d
+npm run docker:up
 
 # Verify all services are running
-docker-compose ps
+docker ps
 ```
 
 ### Stopping the test environment
 
 ```bash
 # Stop all services
-docker-compose down
-
-# Stop and remove volumes (clean slate)
-docker-compose down -v
+npm run docker:down
 ```
 
 ## Writing Cucumber features

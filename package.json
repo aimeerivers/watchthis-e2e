@@ -1,0 +1,34 @@
+{
+  "name": "playwright-cucumber-template",
+  "version": "4.0.5",
+  "description": "Getting started with TypeScript, Playwright and Cucumber",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "cucumber": "HEADLESS=true cucumber-js",
+    "cucumber:report": "open reports/cucumber-report.html",
+    "cucumber:steps": "cucumber-js --dry-run --format usage:steps.txt",
+    "cucumber:wip": "HEADLESS=false TIMEOUT_SECONDS=600 cucumber-js --profile wip",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint --fix",
+    "lint:check": "eslint",
+    "package:lint": "npx npm-package-json-lint .",
+    "playwright:install": "npx playwright install",
+    "playwright:install:chromium": "npx playwright install chromium"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "12.2.0",
+    "@cucumber/pretty-formatter": "2.3.0",
+    "@faker-js/faker": "10.0.0",
+    "@types/node": "24.5.2",
+    "eslint-config-plus-prettier": "4.2.2",
+    "playwright": "1.55.0",
+    "ts-node-maintained": "10.9.6",
+    "typescript": "5.9.2"
+  },
+  "prettier": "eslint-config-plus-prettier/prettier"
+}

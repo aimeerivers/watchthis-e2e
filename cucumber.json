@@ -1,0 +1,17 @@
+{
+  "default": {
+    "loader": ["ts-node-maintained/esm"],
+    "import": ["features/**/*.ts"],
+    "tags": "not @wip",
+    "order": "random",
+    "parallel": 5,
+    "retry": 1,
+    "format": ["html:reports/cucumber-report.html"]
+  },
+  "wip": {
+    "loader": ["ts-node-maintained/esm"],
+    "import": ["features/**/*.ts"],
+    "tags": "@wip",
+    "format": ["@cucumber/pretty-formatter", "html:reports/cucumber-report.html"]
+  }
+}

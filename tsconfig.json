@@ -1,0 +1,4 @@
+{
+  "extends": "eslint-config-plus-prettier/tsconfig",
+  "include": ["features"]
+}

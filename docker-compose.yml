@@ -1,0 +1,92 @@
+services:
+  # MongoDB database for user service
+  mongodb:
+    image: mongo:6.0
+    container_name: watchthis-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: user-service
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    tmpfs:
+      - /data/db # Use tmpfs for ephemeral data storage
+    networks:
+      - watchthis-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # WatchThis Home Service
+  watchthis-home-service:
+    build:
+      context: ../watchthis-home-service
+      dockerfile: Dockerfile
+    container_name: watchthis-home-service
+    restart: unless-stopped
+    ports:
+      - "7279:7279"
+    environment:
+      # Server Configuration
+      PORT: 7279
+      BASE_URL: http://localhost:7279
+      NODE_ENV: development
+
+      # Service URLs - using container names for internal communication
+      USER_SERVICE_URL: http://localhost:8583
+      SHARING_SERVICE_URL: http://localhost:8372
+      MEDIA_SERVICE_URL: http://localhost:7769
+    networks:
+      - watchthis-network
+    depends_on:
+      watchthis-user-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7279/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # WatchThis User Service
+  watchthis-user-service:
+    build:
+      context: ../watchthis-user-service
+      dockerfile: Dockerfile
+    container_name: watchthis-user-service
+    restart: unless-stopped
+    ports:
+      - "8583:8583"
+    environment:
+      # Server Configuration
+      BASE_URL: http://localhost:8583
+      PORT: 8583
+      NODE_ENV: development
+
+      # Database Configuration - using container name (internal port still 27017)
+      MONGO_URL: mongodb://mongodb:27017/user-service
+
+      # Session Configuration
+      SESSION_SECRET: test-session-secret-for-e2e-testing
+
+      # JWT Configuration
+      JWT_SECRET: test-jwt-secret-key-for-e2e-testing-make-it-long-and-secure
+      JWT_EXPIRES_IN: 24h
+      JWT_REFRESH_EXPIRES_IN: 7d
+    networks:
+      - watchthis-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8583/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  watchthis-network:
+    driver: bridge
+    name: watchthis-network

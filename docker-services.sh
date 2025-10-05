@@ -64,6 +64,12 @@ case "$1" in
     echo "✅ Images updated successfully!"
     ;;
 
+  "wait")
+    echo "⏳ Waiting for services to be healthy..."
+    docker-compose up --wait
+    echo "✅ All services are healthy!"
+    ;;
+
   "build")
     echo "🔨 Building services locally..."
     docker-compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache
@@ -72,7 +78,7 @@ case "$1" in
   *)
     echo "WatchThis E2E Docker Management"
     echo ""
-    echo "Usage: $0 {up|dev|down|restart|logs|status|clean|pull|build}"
+    echo "Usage: $0 {up|dev|down|restart|logs|status|clean|pull|build|wait}"
     echo ""
     echo "Published Image Commands (Default):"
     echo "  up           - Start services using published GHCR images"
@@ -87,6 +93,7 @@ case "$1" in
     echo "  restart      - Restart services (using published images)"
     echo "  logs         - View logs (optionally specify service name)"
     echo "  status       - Show service status and health check URLs"
+    echo "  wait         - Wait for all services to be healthy"
     echo "  clean        - Stop services and remove volumes"
     echo ""
     echo "Examples:"

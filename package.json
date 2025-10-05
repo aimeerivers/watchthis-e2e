@@ -21,6 +21,7 @@
     "docker:restart": "./docker-services.sh restart",
     "docker:status": "./docker-services.sh status",
     "docker:up": "./docker-services.sh up",
+    "docker:wait": "./docker-services.sh wait",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint --fix",

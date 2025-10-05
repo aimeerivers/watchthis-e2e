@@ -9,6 +9,15 @@ export class BasePage {
     this.page = page;
   }
 
+  // Environment variable utilities
+  protected getRequiredEnv(envVarName: string): string {
+    const value = process.env[envVarName];
+    if (!value) {
+      throw new Error(`${envVarName} is not defined in environment variables`);
+    }
+    return value;
+  }
+
   // Navigation
   async goto(url: string): Promise<void> {
     await this.page.goto(url);

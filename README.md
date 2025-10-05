@@ -1,10 +1,10 @@
-# WatchThis E2E
+# WatchThis E2E Environment
 
-End-to-end test scenarios for the WatchThis microservices architecture, using Docker Compose, Cucumber and Playwright.
+A complete, working end-to-end environment for the WatchThis microservices architecture. This setup provides a fully orchestrated development and testing environment using Docker Compose, with automated testing capabilities powered by Cucumber and Playwright.
 
-Scenarios written in Gherkin, step definitions in TypeScript.
+Provides a ready-to-use, isolated environment where all WatchThis services can run and communicate together.
 
-Uses CucumberJS, TS Node and ES modules. Includes TSConfig, ESLint Prettier and Package Lint.
+Also provides comprehensive test automation with scenarios written in Gherkin and step definitions in TypeScript.
 
 ## WatchThis Services Architecture
 
@@ -15,9 +15,9 @@ WatchThis is built as a microservices architecture with the following services:
 - **watchthis-media-service** - Media content management and streaming
 - **watchthis-sharing-service** - Social sharing and recommendations
 
-## Docker Compose Test Environment
+## Complete Environment Setup
 
-This E2E testing suite uses Docker Compose to orchestrate a complete test environment where all WatchThis services can communicate with each other. The setup supports two modes:
+This project provides a complete, working environment for the entire WatchThis microservices ecosystem. Using Docker Compose, it orchestrates all services so they can communicate with each other just like in production. The setup supports two deployment modes:
 
 ### 🚀 Published Images (Default)
 
@@ -37,13 +37,14 @@ Builds services from local source code for development and debugging:
 - **Custom Builds**: Test experimental features or fixes
 - **Development Workflow**: Ideal for service development
 
-### Benefits
+### Key Benefits
 
-- **Isolated Testing Environment**: Each test run gets a fresh, consistent environment
-- **Service Communication**: Test real inter-service communication and API interactions
-- **Database Integration**: Test with actual databases and data persistence
-- **Network Simulation**: Test network conditions, timeouts, and service discovery
-- **Scalability Testing**: Easily scale services up/down to test load scenarios
+- **Complete Working Environment**: Full WatchThis ecosystem running together
+- **Isolated & Consistent**: Each environment spin-up is fresh and reproducible
+- **Real Service Communication**: Authentic inter-service communication and API interactions
+- **Production-Like Setup**: Includes databases, networking, and service discovery
+- **Development Ready**: Perfect for development, debugging, and demonstration
+- **Testing Capable**: Built-in automated testing with Cucumber and Playwright
 
 ## Getting started
 
@@ -52,7 +53,7 @@ Builds services from local source code for development and debugging:
 - Docker and Docker Compose installed
 - Node.js installed
 
-### Setup
+### Quick Start
 
 ```bash
 # Install dependencies
@@ -66,54 +67,81 @@ cp .env.local .env
 # Pull latest published images (recommended)
 npm run docker:pull
 
-# Start the WatchThis services test environment
+# Start the complete WatchThis environment
 npm run docker:up
 
-# Verify all services are running
+# Verify all services are running and healthy
 npm run docker:status
 ```
 
-### Docker Commands
+Your WatchThis environment is now running! All services are connected and ready to use.
 
-#### Using Published Images (Recommended)
+### Environment Management
+
+#### Using Published Images (Recommended for Demos/Testing)
 
 ```bash
-# Pull latest published images from GHCR
+# Pull latest stable images from GHCR
 npm run docker:pull
 
-# Start services using published images
+# Start the complete environment
 npm run docker:up
 
-# Update to latest published images
+# Update to latest published versions
 npm run docker:pull
 ```
 
-#### Using Local Development Mode
+#### Using Local Development Mode (For Active Development)
 
 ```bash
 # Build services from local source code
 npm run docker:build
 
-# Start services using local builds
+# Start environment with your local changes
 npm run docker:dev
 ```
 
-#### General Commands
+#### Managing Your Environment
 
 ```bash
 # Stop all services
 npm run docker:down
 
-# View service status and health checks
+# Check service health and status
 npm run docker:status
 
-# View logs
+# View service logs
 npm run docker:logs
 npm run docker:logs watchthis-user-service  # specific service
 
-# Clean up everything (removes volumes)
+# Clean restart (removes all data)
 npm run docker:clean
 ```
+
+## Using Your WatchThis Environment
+
+Once your environment is running, you have a complete WatchThis ecosystem at your disposal:
+
+### Available Services
+
+All services are accessible and fully connected:
+
+- **Home Service**: Main application frontend and routing
+- **User Service**: Authentication and profile management
+- **Media Service**: Content management and streaming
+- **Sharing Service**: Social features and recommendations
+
+### Use Cases
+
+- **Development**: Develop and test new features across services
+- **Integration Testing**: Verify service-to-service communication
+- **Demonstrations**: Show the complete WatchThis application
+- **Debugging**: Troubleshoot issues in a controlled environment
+- **API Testing**: Test endpoints and data flows between services
+
+## Automated Testing
+
+The environment includes comprehensive automated testing capabilities using Cucumber and Playwright. This is completely optional - you can use the environment without running any tests.
 
 ## Writing Cucumber features
 
@@ -124,12 +152,14 @@ npm run docker:clean
 
 ## Running Cucumber
 
+If you want to run the automated test suite against your environment:
+
 ```bash
-# Run all tests against Docker environment
+# Run all automated tests
 npm run cucumber
 ```
 
-This will run cucumber headless in parallel against the Docker Compose services.
+This runs the complete test suite headless in parallel against your running environment.
 
 ### Test Execution Options
 
@@ -140,22 +170,6 @@ npm run cucumber:wip
 # Run tests with specific tags
 npm run cucumber -- --tags "@smoke"
 npm run cucumber -- --tags "@user-service"
-```
-
-### Service Health Checks
-
-```bash
-# Check if all services are healthy
-npm run docker:status
-
-# View logs for all services
-npm run docker:logs
-
-# View logs for specific service
-npm run docker:logs watchthis-user-service
-
-# Follow logs in real-time
-docker-compose logs -f
 ```
 
 ### Published Images
@@ -175,21 +189,13 @@ The project uses different environment files for different contexts:
 - **`.env.local`** - Template for local development
 - **`.env.github`** - Environment for GitHub Actions CI (committed to repo)
 
-**For Local Development:**
-
-### Test Debugging
-
-```bash
-# Run work-in-progress scenarios in headed mode for debugging
-npm run cucumber:wip
-```
-
-### Common Issues
+### Troubleshooting
 
 - **Services not starting**: Check `docker-compose logs` for startup errors
 - **Network connectivity**: Ensure all services are on the same Docker network
-- **Database migrations**: Services may need time to initialize databases
-- **Port conflicts**: Make sure the ports are not used by other applications
+- **Database initialization**: Services may need time to set up databases
+- **Port conflicts**: Ensure required ports are not in use by other applications
+- **Environment not responding**: Try `npm run docker:clean` for a fresh start
 
 ## Reports
 
@@ -224,8 +230,6 @@ npm run package:lint
 - `lint` will check for errors and fix formatting in `.ts` and `.js` files.
 - `format` will apply format rules to all possible files.
 - `package:lint` will warn of any inconsistencies in the `package.json` file.
-
-## Development Workflow
 
 ### Adding New Tests
 

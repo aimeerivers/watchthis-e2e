@@ -40,6 +40,12 @@ jobs:
       - name: Install Playwright Chromium browser
         run: npm run playwright:install:chromium
 
+      - name: Setup environment variables
+        run: |
+          echo "📋 Setting up test environment variables..."
+          cp .env.github .env
+          echo "✅ Environment configured for GitHub Actions"
+
       - name: Start WatchThis services
         run: |
           echo "🚀 Starting WatchThis services..."
@@ -47,7 +53,7 @@ jobs:
           npm run docker:wait
           npm run docker:status
 
-      - name: Run Cucumber
+      - name: Run Cucumber E2E tests
         run: npm run cucumber
 
       - name: Upload Cucumber report

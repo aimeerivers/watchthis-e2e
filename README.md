@@ -59,6 +59,10 @@ Builds services from local source code for development and debugging:
 npm install
 npm run playwright:install
 
+# Setup environment variables (first time only)
+cp .env.local .env
+# Edit .env if needed for your local setup
+
 # Pull latest published images (recommended)
 npm run docker:pull
 
@@ -162,6 +166,16 @@ The services are published as Docker images to GitHub Container Registry:
 - **watchthis-user-service**: `ghcr.io/aimeerivers/watchthis-user-service:latest`
 
 These images are automatically built and published when changes are merged to the main branch of each service repository.
+
+### Environment Configuration
+
+The project uses different environment files for different contexts:
+
+- **`.env`** - Your local environment (git-ignored, create from template)
+- **`.env.local`** - Template for local development
+- **`.env.github`** - Environment for GitHub Actions CI (committed to repo)
+
+**For Local Development:**
 
 ### Test Debugging
 

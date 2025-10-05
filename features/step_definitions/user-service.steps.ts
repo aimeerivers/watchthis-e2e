@@ -5,6 +5,30 @@ import { faker } from "@faker-js/faker";
 
 import CustomWorld from "../support/world";
 
+Given("a user is logged in", async function (this: CustomWorld) {
+  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+    throw new Error("ADMIN_USERNAME or ADMIN_PASSWORD is not defined in environment variables");
+  }
+
+  if (!process.env.HOME_SERVICE_URL) {
+    throw new Error("HOME_SERVICE_URL is not defined in environment variables");
+  }
+
+  this.user = {
+    username: process.env.ADMIN_USERNAME,
+    password: process.env.ADMIN_PASSWORD,
+  };
+
+  await this.page?.goto(process.env.HOME_SERVICE_URL);
+  await this.page?.getByRole("button", { name: "Log in" }).click();
+
+  await this.page?.getByRole("textbox", { name: "Username:" }).fill(this.user.username);
+  await this.page?.getByRole("textbox", { name: "Password:" }).fill(this.user.password);
+  await this.page?.getByRole("button", { name: "Submit" }).click();
+
+  await this.page?.getByText(`You are logged in as ${this.user?.username}`).waitFor();
+});
+
 Given("a user visits the user service", async function (this: CustomWorld) {
   if (!this.page) {
     throw new Error("Page is not initialized. Make sure to call openBrowser() in a Before hook.");
@@ -66,6 +90,10 @@ Then("they should stay on the user service", async function (this: CustomWorld) 
 
 Then("they should see a welcome message", async function (this: CustomWorld) {
   await this.page?.getByText(`Welcome, ${this.user?.username}!`).waitFor();
+});
+
+Then("they should not be logged in", async function (this: CustomWorld) {
+  await this.page?.getByRole("button", { name: "Log in" }).waitFor();
 });
 
 function newUser() {

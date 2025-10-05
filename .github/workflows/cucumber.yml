@@ -1,8 +1,9 @@
-name: Run Cucumber features
+name: Cucumber
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:

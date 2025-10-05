@@ -1,47 +1,28 @@
-import assert from "node:assert";
-
 import { Given, Then, When } from "@cucumber/cucumber";
 
 import CustomWorld from "../support/world";
 
 Given("a user visits the home service", async function (this: CustomWorld) {
-  if (!this.page) {
-    throw new Error("Page is not initialized. Make sure to call openBrowser() in a Before hook.");
+  if (!this.pageManager) {
+    throw new Error("PageManager is not initialized. Be sure to call openBrowser in a Before hook.");
   }
 
-  if (!process.env.HOME_SERVICE_URL) {
-    throw new Error("HOME_SERVICE_URL is not defined in environment variables");
-  }
-
-  await this.page?.goto(process.env.HOME_SERVICE_URL);
+  await this.pageManager.homeService.visitHomeService();
 });
 
 When("they visit the home service", async function (this: CustomWorld) {
-  if (!this.page) {
-    throw new Error("Page is not initialized. Make sure to call openBrowser() in a Before hook.");
-  }
-
-  if (!process.env.HOME_SERVICE_URL) {
-    throw new Error("HOME_SERVICE_URL is not defined in environment variables");
-  }
-
-  await this.page?.goto(process.env.HOME_SERVICE_URL);
+  await this.pageManager!.homeService.visitHomeService();
 });
 
 Then("they should be returned to the home service", async function (this: CustomWorld) {
-  if (!process.env.HOME_SERVICE_URL) {
-    throw new Error("HOME_SERVICE_URL is not defined in environment variables");
-  }
-
-  await this.page?.waitForLoadState("networkidle");
-
-  const currentUrl = this.page?.url();
-  assert(
-    currentUrl?.startsWith(process.env.HOME_SERVICE_URL),
-    `Expected to be at home service URL ${process.env.HOME_SERVICE_URL}, but was at ${currentUrl}`
-  );
+  await this.pageManager!.homeService.waitForLoadState();
+  await this.pageManager!.homeService.assertOnHomeService();
 });
 
 Then("they should be logged in", async function (this: CustomWorld) {
-  await this.page?.getByText(`You are logged in as ${this.user?.username}`).waitFor();
+  if (!this.user) {
+    throw new Error("User is not initialized");
+  }
+
+  await this.pageManager!.homeService.assertUserLoggedIn(this.user.username);
 });

@@ -133,7 +133,6 @@ jobs:
         run: |
           echo "🚀 Starting WatchThis services..."
           npm run docker:up
-          npm run docker:wait
           npm run docker:status
 
       - name: Run Cucumber E2E tests

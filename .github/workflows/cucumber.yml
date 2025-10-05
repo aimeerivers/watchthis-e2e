@@ -4,22 +4,8 @@ on:
   pull_request:
     branches:
       - main
-  push:            echo "🔄 Processing $IMAGE..."
-            
-            # Try to load from cache first
-            if [ -f "$CACHE_FILE" ]; then
-              echo "  📦 Loading from cache..."
-              docker load < "$CACHE_FILE" || echo "  ⚠️ Cache load failed, will pull fresh"
-            fi
-            
-            # Pull latest (only downloads if changed)
-            echo "  📥 Pulling latest..."
-            if docker pull "$IMAGE"; then
-              echo "  ✅ Pull successful"
-            else
-              echo "  ❌ Pull failed for $IMAGE"
-              continue
-            fies:
+  push:
+    branches:
       - main
   workflow_dispatch:
   workflow_call:
@@ -62,9 +48,11 @@ jobs:
       - name: Pull and cache all Docker images
         run: |
           echo "📥 Discovering and pulling all Docker images..."
-          
+
           # Extract all images from docker-compose.yml (both GHCR and public registry)
-          IMAGES=$(grep -E "^\s*image:\s*" docker-compose.yml | sed 's/.*image:\s*//' | sed 's/\s*$//' | sort | uniq)          if [ -z "$IMAGES" ]; then
+          IMAGES=$(grep -E "^\s*image:\s*" docker-compose.yml | sed 's/.*image:\s*//' | sed 's/\s*$//' | sort | uniq)
+
+          if [ -z "$IMAGES" ]; then
             echo "⚠️ No images found in docker-compose.yml"
             exit 0
           fi
@@ -86,13 +74,18 @@ jobs:
             
             # Try to load from cache first
             if [ -f "$CACHE_FILE" ]; then
-              echo "  � Loading from cache..."
+              echo "  📦 Loading from cache..."
               docker load < "$CACHE_FILE" || echo "  ⚠️ Cache load failed, will pull fresh"
             fi
             
             # Pull latest (only downloads if changed)
             echo "  📥 Pulling latest..."
-            docker pull "$IMAGE"
+            if docker pull "$IMAGE"; then
+              echo "  ✅ Pull successful"
+            else
+              echo "  ❌ Pull failed for $IMAGE"
+              continue
+            fi
             
             # Save to cache for next run
             echo "  💾 Saving to cache..."

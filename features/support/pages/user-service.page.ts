@@ -11,18 +11,21 @@ export class UserServicePage extends BasePage {
     this.auth = new AuthPage(page);
   }
 
-  async visitUserService(): Promise<void> {
+  private getUserServiceUrl(): string {
     if (!process.env.USER_SERVICE_URL) {
       throw new Error("USER_SERVICE_URL is not defined in environment variables");
     }
-    await this.goto(process.env.USER_SERVICE_URL);
+    return process.env.USER_SERVICE_URL;
+  }
+
+  async visitUserService(): Promise<void> {
+    const url = this.getUserServiceUrl();
+    await this.goto(url);
   }
 
   async assertOnUserService(): Promise<void> {
-    if (!process.env.USER_SERVICE_URL) {
-      throw new Error("USER_SERVICE_URL is not defined in environment variables");
-    }
-    await this.assertUrlStartsWith(process.env.USER_SERVICE_URL);
+    const url = this.getUserServiceUrl();
+    await this.assertUrlStartsWith(url);
   }
 
   // User service specific actions

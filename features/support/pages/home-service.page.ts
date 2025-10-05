@@ -11,18 +11,21 @@ export class HomeServicePage extends BasePage {
     this.auth = new AuthPage(page);
   }
 
-  async visitHomeService(): Promise<void> {
+  private getHomeServiceUrl(): string {
     if (!process.env.HOME_SERVICE_URL) {
       throw new Error("HOME_SERVICE_URL is not defined in environment variables");
     }
-    await this.goto(process.env.HOME_SERVICE_URL);
+    return process.env.HOME_SERVICE_URL;
+  }
+
+  async visitHomeService(): Promise<void> {
+    const url = this.getHomeServiceUrl();
+    await this.goto(url);
   }
 
   async assertOnHomeService(): Promise<void> {
-    if (!process.env.HOME_SERVICE_URL) {
-      throw new Error("HOME_SERVICE_URL is not defined in environment variables");
-    }
-    await this.assertUrlStartsWith(process.env.HOME_SERVICE_URL);
+    const url = this.getHomeServiceUrl();
+    await this.assertUrlStartsWith(url);
   }
 
   // Home service specific actions

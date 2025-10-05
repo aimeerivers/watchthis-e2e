@@ -1,0 +1,13 @@
+services:
+  # Override for local development - build services from source
+  watchthis-home-service:
+    build:
+      context: ../watchthis-home-service
+      dockerfile: Dockerfile
+    image: watchthis-home-service:local
+
+  watchthis-user-service:
+    build:
+      context: ../watchthis-user-service
+      dockerfile: Dockerfile
+    image: watchthis-user-service:local

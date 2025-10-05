@@ -22,9 +22,7 @@ services:
 
   # WatchThis Home Service
   watchthis-home-service:
-    build:
-      context: ../watchthis-home-service
-      dockerfile: Dockerfile
+    image: ghcr.io/aimeerivers/watchthis-home-service:latest
     container_name: watchthis-home-service
     restart: unless-stopped
     ports:
@@ -51,9 +49,7 @@ services:
 
   # WatchThis User Service
   watchthis-user-service:
-    build:
-      context: ../watchthis-user-service
-      dockerfile: Dockerfile
+    image: ghcr.io/aimeerivers/watchthis-user-service:latest
     container_name: watchthis-user-service
     restart: unless-stopped
     ports:

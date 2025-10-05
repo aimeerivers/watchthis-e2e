@@ -4,10 +4,19 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - uses: actions/checkout@v4
@@ -16,14 +25,29 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: node
+          cache: npm
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright Chromium browser
         run: npm run playwright:install:chromium
 
-      - name: Run Cucumber features
+      - name: Start WatchThis services
+        run: |
+          echo "🚀 Starting WatchThis services..."
+          npm run docker:up
+          npm run docker:wait
+          npm run docker:status
+
+      - name: Run Cucumber
         run: npm run cucumber
 
       - name: Upload Cucumber report
@@ -33,3 +57,15 @@ jobs:
           name: reports
           path: reports/
           retention-days: 5
+
+      - name: View service logs on failure
+        if: failure()
+        run: |
+          echo "🔍 Service logs for debugging:"
+          npm run docker:logs
+
+      - name: Stop services
+        if: always()
+        run: |
+          echo "🛑 Stopping services..."
+          npm run docker:down

@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import type { Browser, BrowserContext, Page } from "playwright";
 import { chromium } from "playwright";
 
+import { PageObjectManager } from "./pages/page-manager.js";
+
 dotenv.config();
 
 setDefaultTimeout(Number(process.env.TIMEOUT_SECONDS ?? 5) * 1000);
@@ -12,6 +14,7 @@ export default class CustomWorld extends World {
   browser: Browser | null;
   context: BrowserContext | null;
   page: Page | null;
+  pageManager?: PageObjectManager;
   user?: { username: string; password: string };
 
   constructor(options: IWorldOptions<unknown>) {
@@ -28,6 +31,7 @@ export default class CustomWorld extends World {
     });
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
+    this.pageManager = new PageObjectManager(this.page);
   }
 
   async closeBrowser(): Promise<void> {

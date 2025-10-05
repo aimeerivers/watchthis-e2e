@@ -1,104 +1,52 @@
-import assert from "node:assert";
-
 import { Given, Then, When } from "@cucumber/cucumber";
-import { faker } from "@faker-js/faker";
 
+import { PageObjectManager } from "../support/pages/page-manager.js";
 import CustomWorld from "../support/world";
 
 Given("a user is logged in", async function (this: CustomWorld) {
-  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
-    throw new Error("ADMIN_USERNAME or ADMIN_PASSWORD is not defined in environment variables");
+  if (!this.pageManager) {
+    throw new Error("PageManager is not initialized. Be sure to call openBrowser in a Before hook.");
   }
 
-  if (!process.env.HOME_SERVICE_URL) {
-    throw new Error("HOME_SERVICE_URL is not defined in environment variables");
-  }
-
-  this.user = {
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
-  };
-
-  await this.page?.goto(process.env.HOME_SERVICE_URL);
-  await this.page?.getByRole("button", { name: "Log in" }).click();
-
-  await this.page?.getByRole("textbox", { name: "Username:" }).fill(this.user.username);
-  await this.page?.getByRole("textbox", { name: "Password:" }).fill(this.user.password);
-  await this.page?.getByRole("button", { name: "Submit" }).click();
-
-  await this.page?.getByText(`You are logged in as ${this.user?.username}`).waitFor();
+  this.user = await this.pageManager.setupLoggedInUser();
 });
 
 Given("a user visits the user service", async function (this: CustomWorld) {
-  if (!this.page) {
-    throw new Error("Page is not initialized. Make sure to call openBrowser() in a Before hook.");
+  if (!this.pageManager) {
+    throw new Error("PageManager is not initialized. Be sure to call openBrowser in a Before hook.");
   }
 
-  if (!process.env.USER_SERVICE_URL) {
-    throw new Error("USER_SERVICE_URL is not defined in environment variables");
-  }
-
-  await this.page?.goto(process.env.USER_SERVICE_URL);
+  await this.pageManager.userService.visitUserService();
 });
 
 When("they visit the user service", async function (this: CustomWorld) {
-  if (!this.page) {
-    throw new Error("Page is not initialized. Make sure to call openBrowser() in a Before hook.");
-  }
-
-  if (!process.env.USER_SERVICE_URL) {
-    throw new Error("USER_SERVICE_URL is not defined in environment variables");
-  }
-
-  await this.page?.goto(process.env.USER_SERVICE_URL);
+  await this.pageManager!.userService.visitUserService();
 });
 
 When("they enter valid log in details", async function (this: CustomWorld) {
-  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
-    throw new Error("ADMIN_USERNAME or ADMIN_PASSWORD is not defined in environment variables");
-  }
+  this.user = PageObjectManager.getAdminUser();
 
-  this.user = {
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
-  };
-
-  await this.page?.getByRole("textbox", { name: "Username:" }).fill(this.user.username);
-  await this.page?.getByRole("textbox", { name: "Password:" }).fill(this.user.password);
-  await this.page?.getByRole("button", { name: "Submit" }).click();
+  await this.pageManager!.userService.auth.submitCredentials(this.user.username, this.user.password);
 });
 
 When("they enter valid sign up details", async function (this: CustomWorld) {
-  this.user = newUser();
+  this.user = PageObjectManager.generateUser();
 
-  await this.page?.getByRole("textbox", { name: "Username:" }).fill(this.user.username);
-  await this.page?.getByRole("textbox", { name: "Password:" }).fill(this.user.password);
-  await this.page?.getByRole("button", { name: "Submit" }).click();
+  await this.pageManager!.userService.auth.submitCredentials(this.user.username, this.user.password);
 });
 
 Then("they should stay on the user service", async function (this: CustomWorld) {
-  if (!process.env.USER_SERVICE_URL) {
-    throw new Error("USER_SERVICE_URL is not defined in environment variables");
-  }
-
-  const currentUrl = this.page?.url();
-  assert(
-    currentUrl?.startsWith(process.env.USER_SERVICE_URL),
-    `Expected to be at home service URL ${process.env.USER_SERVICE_URL}, but was at ${currentUrl}`
-  );
+  await this.pageManager!.userService.assertOnUserService();
 });
 
 Then("they should see a welcome message", async function (this: CustomWorld) {
-  await this.page?.getByText(`Welcome, ${this.user?.username}!`).waitFor();
+  if (!this.user) {
+    throw new Error("User is not initialized");
+  }
+
+  await this.pageManager!.userService.auth.waitForWelcomeMessage(this.user.username);
 });
 
 Then("they should not be logged in", async function (this: CustomWorld) {
-  await this.page?.getByRole("button", { name: "Log in" }).waitFor();
+  await this.pageManager!.userService.auth.waitForLoginButton();
 });
-
-function newUser() {
-  return {
-    username: faker.internet.username().replaceAll(/[.-]/g, "_"),
-    password: faker.internet.password({ length: 8, memorable: true, pattern: /[A-Za-z0-9]/ }) + "1aA",
-  };
-}

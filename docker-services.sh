@@ -7,43 +7,43 @@ set -e
 case "$1" in
   "up")
     echo "🚀 Starting WatchThis services (using published images)..."
-    docker-compose up -d
+    docker compose up -d
     echo "⏳ Waiting for services to be healthy..."
     sleep 10
-    docker-compose ps
+    docker compose ps
     ;;
 
   "dev")
     echo "🚀 Starting WatchThis services (using local builds)..."
-    docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d
+    docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
     echo "⏳ Waiting for services to be healthy..."
     sleep 10
-    docker-compose ps
+    docker compose ps
     ;;
     
   "down")
     echo "🛑 Stopping WatchThis services..."
-    docker-compose down
-    docker-compose -f docker-compose.yml -f docker-compose.local.yml down 2>/dev/null || true
+    docker compose down
+    docker compose -f docker-compose.yml -f docker-compose.local.yml down 2>/dev/null || true
     ;;
     
   "restart")
     echo "🔄 Restarting WatchThis services (using published images)..."
-    docker-compose down
-    docker-compose up -d
+    docker compose down
+    docker compose up -d
     ;;
     
   "logs")
     if [ -z "$2" ]; then
-      docker-compose logs -f
+      docker compose logs -f
     else
-      docker-compose logs -f "$2"
+      docker compose logs -f "$2"
     fi
     ;;
     
   "status")
     echo "📊 Service Status:"
-    docker-compose ps
+    docker compose ps
     echo ""
     echo "🏥 Health Checks:"
     echo "Home Service: http://localhost:7279/health"
@@ -52,8 +52,8 @@ case "$1" in
     
   "clean")
     echo "🧹 Cleaning up everything (including volumes)..."
-    docker-compose down -v
-    docker-compose -f docker-compose.yml -f docker-compose.local.yml down -v 2>/dev/null || true
+    docker compose down -v
+    docker compose -f docker-compose.yml -f docker-compose.local.yml down -v 2>/dev/null || true
     docker system prune -f
     ;;
 
@@ -66,13 +66,13 @@ case "$1" in
 
   "wait")
     echo "⏳ Waiting for services to be healthy..."
-    docker-compose up --wait
+    docker compose up --wait
     echo "✅ All services are healthy!"
     ;;
 
   "build")
     echo "🔨 Building services locally..."
-    docker-compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache
+    docker compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache
     ;;
     
   *)

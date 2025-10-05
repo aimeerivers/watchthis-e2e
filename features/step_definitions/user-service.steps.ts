@@ -29,6 +29,21 @@ When("they visit the user service", async function (this: CustomWorld) {
   await this.page?.goto(process.env.USER_SERVICE_URL);
 });
 
+When("they enter valid log in details", async function (this: CustomWorld) {
+  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+    throw new Error("ADMIN_USERNAME or ADMIN_PASSWORD is not defined in environment variables");
+  }
+
+  this.user = {
+    username: process.env.ADMIN_USERNAME,
+    password: process.env.ADMIN_PASSWORD,
+  };
+
+  await this.page?.getByRole("textbox", { name: "Username:" }).fill(this.user.username);
+  await this.page?.getByRole("textbox", { name: "Password:" }).fill(this.user.password);
+  await this.page?.getByRole("button", { name: "Submit" }).click();
+});
+
 When("they enter valid sign up details", async function (this: CustomWorld) {
   this.user = newUser();
 

@@ -65,6 +65,20 @@ When("they try to add a media item with an invalid URL", async function (this: C
   if (this.lastResponse.ok) {
     this.lastResponseData = await this.lastResponse.json();
   } else {
+    this.lastResponseData = await this.lastResponse.json();
+  }
+});
+
+When("an unauthenticated user tries to access the media service", async function (this: CustomWorld) {
+  const mediaServiceUrl = process.env.MEDIA_SERVICE_URL || "http://localhost:7769";
+
+  this.lastResponse = await fetch(`${mediaServiceUrl}/api/v1/media`, {
+    method: "GET",
+  });
+
+  if (this.lastResponse.ok) {
+    this.lastResponseData = await this.lastResponse.json();
+  } else {
     // Store error response for assertions
     this.lastResponseData = await this.lastResponse.json();
   }

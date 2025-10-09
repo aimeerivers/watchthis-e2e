@@ -1,5 +1,10 @@
 Feature: Media Service
 
+  @wip
+  Scenario: Media service requires authentication
+    When an unauthenticated user tries to access the media service
+    Then they should receive a 401 Unauthorized response
+
   Scenario: Add a new media item with a valid URL
     Given a user is authenticated
     When they add a media item with a YouTube URL

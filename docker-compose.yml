@@ -47,6 +47,69 @@ services:
       timeout: 10s
       retries: 3
 
+  # WatchThis Media Service
+  watchthis-media-service:
+    image: ghcr.io/aimeerivers/watchthis-media-service:latest
+    container_name: watchthis-media-service
+    restart: unless-stopped
+    ports:
+      - "7769:7769"
+    environment:
+      # Server Configuration
+      PORT: 7769
+      BASE_URL: http://localhost:7769
+      NODE_ENV: development
+
+      # Database Configuration - using container name (internal port still 27017)
+      MONGO_URL: mongodb://mongodb:27017/media-service
+    networks:
+      - watchthis-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7769/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # WatchThis Sharing Service
+  watchthis-sharing-service:
+    image: ghcr.io/aimeerivers/watchthis-sharing-service:latest
+    container_name: watchthis-sharing-service
+    restart: unless-stopped
+    ports:
+      - "8372:8372"
+    environment:
+      # Server Configuration
+      PORT: 8372
+      BASE_URL: http://localhost:8372
+      NODE_ENV: development
+
+      # Database Configuration - using container name (internal port still 27017)
+      MONGO_URL: mongodb://mongodb:27017/sharing-service
+
+      # Service URLs - using container names for internal communication
+      HOME_SERVICE_URL: http://watchthis-home-service:7279
+      MEDIA_SERVICE_URL: http://watchthis-media-service:7769
+      USER_SERVICE_URL: http://watchthis-user-service:8583
+    networks:
+      - watchthis-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      watchthis-home-service:
+        condition: service_healthy
+      watchthis-media-service:
+        condition: service_healthy
+      watchthis-user-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8372/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # WatchThis User Service
   watchthis-user-service:
     image: ghcr.io/aimeerivers/watchthis-user-service:latest

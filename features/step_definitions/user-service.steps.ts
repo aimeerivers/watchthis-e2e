@@ -3,6 +3,45 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import { PageObjectManager } from "../support/pages/page-manager.js";
 import CustomWorld from "../support/world";
 
+Given("a user is authenticated", async function (this: CustomWorld) {
+  // Use admin user for API testing
+  const adminUser = PageObjectManager.getAdminUser();
+
+  // Login via API to get JWT token
+  const userServiceUrl = process.env.USER_SERVICE_URL || "http://localhost:8583";
+  const loginResponse = await fetch(`${userServiceUrl}/api/v1/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: adminUser.username,
+      password: adminUser.password,
+    }),
+  });
+
+  if (!loginResponse.ok) {
+    throw new Error(`Login failed: ${loginResponse.status} ${loginResponse.statusText}`);
+  }
+
+  const loginData = (await loginResponse.json()) as {
+    success: boolean;
+    data?: {
+      accessToken: string;
+      user: { _id: string; username: string };
+    };
+  };
+
+  if (!loginData.success || !loginData.data?.accessToken) {
+    throw new Error(`Login failed: ${JSON.stringify(loginData)}`);
+  }
+
+  // Store user info and token for use in other steps
+  this.user = adminUser;
+  this.accessToken = loginData.data.accessToken;
+  this.userId = loginData.data.user._id;
+});
+
 Given("a user is logged in", async function (this: CustomWorld) {
   if (!this.pageManager) {
     throw new Error("PageManager is not initialized. Be sure to call openBrowser in a Before hook.");

@@ -11,11 +11,16 @@ dotenv.config();
 setDefaultTimeout(Number(process.env.TIMEOUT_SECONDS ?? 5) * 1000);
 
 export default class CustomWorld extends World {
+  accessToken?: string;
   browser: Browser | null;
   context: BrowserContext | null;
+  lastResponse?: Response;
+  lastResponseData?: any;
+  mediaItem?: any;
   page: Page | null;
   pageManager?: PageObjectManager;
   user?: { username: string; password: string };
+  userId?: string;
 
   constructor(options: IWorldOptions<unknown>) {
     super(options);

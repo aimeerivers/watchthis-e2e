@@ -40,7 +40,7 @@ Given("a user has created a media item", async function (this: CustomWorld) {
 });
 
 When("they add a media item with a YouTube URL", async function (this: CustomWorld) {
-  const mediaServiceUrl = process.env.MEDIA_SERVICE_URL || "http://localhost:8584";
+  const mediaServiceUrl = process.env.MEDIA_SERVICE_URL || "http://localhost:7769";
   const testUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
   this.lastResponse = await makeAuthenticatedRequest.call(this, `${mediaServiceUrl}/api/v1/media`, {
@@ -54,7 +54,7 @@ When("they add a media item with a YouTube URL", async function (this: CustomWor
 });
 
 When("they try to add a media item with an invalid URL", async function (this: CustomWorld) {
-  const mediaServiceUrl = process.env.MEDIA_SERVICE_URL || "http://localhost:8584";
+  const mediaServiceUrl = process.env.MEDIA_SERVICE_URL || "http://localhost:7769";
   const invalidUrl = "not-a-valid-url";
 
   this.lastResponse = await makeAuthenticatedRequest.call(this, `${mediaServiceUrl}/api/v1/media`, {

@@ -1,6 +1,10 @@
-@wip
 Feature: Sharing Service
 
+  Scenario: Sharing service requires authentication
+    When an unauthenticated user tries to access the sharing service
+    Then they should receive a 401 Unauthorized response
+
+  @wip
   Scenario: Share a media item with another user
     Given a user is authenticated
     And there is a media item available
@@ -9,6 +13,7 @@ Feature: Sharing Service
     And it should have pending status
     And the recipient should be notified
 
+  @wip
   Scenario: View received shares
     Given a user has received several shares
     When they view their received shares
@@ -16,12 +21,14 @@ Feature: Sharing Service
     And the shares should be ordered by creation date
     And pagination information should be included
 
+  @wip
   Scenario: Mark a shared item as watched
     Given a user has received a share
     When they mark the share as watched
     Then the share status should be updated to watched
     And the watched timestamp should be recorded
 
+  @wip
   Scenario: Get sharing statistics
     Given a user has sent and received multiple shares
     When they request their sharing statistics
@@ -29,18 +36,21 @@ Feature: Sharing Service
     And they should see counts for received shares by status
     And the total counts should be accurate
 
+  @wip
   Scenario: Archive a share
     Given a user has a share (sent or received)
     When they archive the share
     Then the share status should be updated to archived
     And it should no longer appear in active shares
 
+  @wip
   Scenario: Prevent sharing with yourself
     Given a user is authenticated
     When they try to share a media item with themselves
     Then they should receive a self-sharing error
     And no share should be created
 
+  @wip
   Scenario: View sent shares with status filter
     Given a user has sent shares with different statuses
     When they view their sent shares filtered by "watched" status

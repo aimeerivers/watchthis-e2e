@@ -6,6 +6,18 @@ services:
       dockerfile: Dockerfile
     image: watchthis-home-service:local
 
+  watchthis-media-service:
+    build:
+      context: ../watchthis-media-service
+      dockerfile: Dockerfile
+    image: watchthis-media-service:local
+
+  watchthis-sharing-service:
+    build:
+      context: ../watchthis-sharing-service
+      dockerfile: Dockerfile
+    image: watchthis-sharing-service:local
+
   watchthis-user-service:
     build:
       context: ../watchthis-user-service

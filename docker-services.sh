@@ -47,6 +47,8 @@ case "$1" in
     echo ""
     echo "🏥 Health Checks:"
     echo "Home Service: http://localhost:7279/health"
+    echo "Media Service: http://localhost:7769/health"
+    echo "Sharing Service: http://localhost:8372/health"
     echo "User Service: http://localhost:8583/health"
     ;;
     
@@ -60,6 +62,8 @@ case "$1" in
   "pull")
     echo "📥 Pulling latest images from GHCR..."
     docker pull ghcr.io/aimeerivers/watchthis-home-service:latest
+    docker pull ghcr.io/aimeerivers/watchthis-media-service:latest
+    docker pull ghcr.io/aimeerivers/watchthis-sharing-service:latest
     docker pull ghcr.io/aimeerivers/watchthis-user-service:latest
     echo "✅ Images updated successfully!"
     ;;

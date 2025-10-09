@@ -9,9 +9,5 @@ When("an unauthenticated user tries to access the sharing service", async functi
     method: "GET",
   });
 
-  if (this.lastResponse.ok) {
-    this.lastResponseData = await this.lastResponse.json();
-  } else {
-    this.lastResponseData = await this.lastResponse.json();
-  }
+  this.lastResponseData = await this.lastResponse.json();
 });

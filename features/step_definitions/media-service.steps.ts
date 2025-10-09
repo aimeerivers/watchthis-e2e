@@ -62,11 +62,7 @@ When("they try to add a media item with an invalid URL", async function (this: C
     body: JSON.stringify({ url: invalidUrl }),
   });
 
-  if (this.lastResponse.ok) {
-    this.lastResponseData = await this.lastResponse.json();
-  } else {
-    this.lastResponseData = await this.lastResponse.json();
-  }
+  this.lastResponseData = await this.lastResponse.json();
 });
 
 When("an unauthenticated user tries to access the media service", async function (this: CustomWorld) {

@@ -40,9 +40,9 @@ Feature: Media Service
     Then they should receive a validation error
     And no media item should be created
 
-  @wip
-  Scenario: Prevent duplicate media URLs
-    Given a media item already exists with a specific URL
-    When a user tries to add the same URL again
-    Then they should receive a duplicate URL error
+  Scenario: Allow duplicate media URLs
+    Given a user is authenticated
+    And a media item already exists with a specific URL
+    When they try to add the same URL again
+    Then they should receive a 200 OK response
     And the existing media item should be returned

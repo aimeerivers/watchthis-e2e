@@ -28,7 +28,7 @@ When("an unauthenticated user tries to access the media service", async function
   await handleResponse.call(this, response);
 });
 
-Then("the media item should be created successfully", assertSuccessfulMediaCreation);
+Then("the media item should be created successfully", assertSuccessfulMediaResponse);
 
 Then("it should detect YouTube as the platform", async function (this: CustomWorld) {
   assert.strictEqual(this.lastResponseData?.platform, "youtube", "Platform should be detected as 'youtube'");

@@ -95,7 +95,9 @@ function assertHttpStatus(this: CustomWorld, expectedStatus: number): void {
       ? HTTP_STATUS_CODES[expectedStatus as keyof typeof HTTP_STATUS_CODES]
       : "Unknown";
   const actualStatusName =
-    actualStatus in HTTP_STATUS_CODES ? HTTP_STATUS_CODES[actualStatus as keyof typeof HTTP_STATUS_CODES] : "Unknown";
+    typeof actualStatus === "number" && actualStatus in HTTP_STATUS_CODES
+      ? HTTP_STATUS_CODES[actualStatus as keyof typeof HTTP_STATUS_CODES]
+      : "Unknown";
 
   assert.strictEqual(
     actualStatus,

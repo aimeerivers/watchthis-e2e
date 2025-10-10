@@ -90,8 +90,12 @@ Then("the response should be JSON", function (this: CustomWorld) {
 // Helper function to assert HTTP status with better error messages
 function assertHttpStatus(this: CustomWorld, expectedStatus: number): void {
   const actualStatus = this.lastResponse?.status;
-  const statusName = expectedStatus in HTTP_STATUS_CODES ? HTTP_STATUS_CODES[expectedStatus as keyof typeof HTTP_STATUS_CODES] : "Unknown";
-  const actualStatusName = actualStatus in HTTP_STATUS_CODES ? HTTP_STATUS_CODES[actualStatus as keyof typeof HTTP_STATUS_CODES] : "Unknown";
+  const statusName =
+    expectedStatus in HTTP_STATUS_CODES
+      ? HTTP_STATUS_CODES[expectedStatus as keyof typeof HTTP_STATUS_CODES]
+      : "Unknown";
+  const actualStatusName =
+    actualStatus in HTTP_STATUS_CODES ? HTTP_STATUS_CODES[actualStatus as keyof typeof HTTP_STATUS_CODES] : "Unknown";
 
   assert.strictEqual(
     actualStatus,

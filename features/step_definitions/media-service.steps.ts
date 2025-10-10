@@ -89,10 +89,10 @@ async function handleResponse(this: CustomWorld, response: Response): Promise<vo
 }
 
 // Helper function for common success assertions
-function assertSuccessfulMediaCreation(this: CustomWorld): void {
+function assertSuccessfulMediaResponse(this: CustomWorld): void {
   assert.ok(
     [200, 201].includes(this.lastResponse?.status || 0),
-    `Expected status 200 or 201 for successful creation, got ${this.lastResponse?.status}`
+    `Expected status 200 or 201 for successful response, got ${this.lastResponse?.status}`
   );
   assert.ok(this.lastResponseData, "Response should have data");
   assert.ok(this.lastResponseData.id, "Media item should have an ID");

@@ -1,6 +1,5 @@
 Feature: Media Service
 
-  @wip
   Scenario: Media service requires authentication
     When an unauthenticated user tries to access the media service
     Then they should receive a 401 Unauthorized response

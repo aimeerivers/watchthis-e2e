@@ -56,16 +56,9 @@ Builds services from local source code for development and debugging:
 ### Quick Start
 
 ```bash
-# Install dependencies
-npm install
-npm run playwright:install
-
 # Setup environment variables (first time only)
 cp .env.local .env
 # Edit .env if needed for your local setup
-
-# Pull latest published images (recommended)
-npm run docker:pull
 
 # Start the complete WatchThis environment
 npm run docker:up
@@ -75,6 +68,10 @@ npm run docker:status
 ```
 
 Your WatchThis environment is now running! All services are connected and ready to use.
+
+Start by accessing the home service on http://localhost:7279/ and either sign up or log in with the admin username and password listed in `.env.local`
+
+Note that the database is ephemeral by default and will be torn down when the Docker environment is stopped. If you want something more persistent, you probably don't want this E2E environment; instead you should run the services locally.
 
 ### Environment Management
 
@@ -155,6 +152,10 @@ The environment includes comprehensive automated testing capabilities using Cucu
 If you want to run the automated test suite against your environment:
 
 ```bash
+# Install dependencies
+npm install
+npm run playwright:install
+
 # Run all automated tests
 npm run cucumber
 ```
@@ -178,6 +179,8 @@ The services are published as Docker images to GitHub Container Registry:
 
 - **watchthis-home-service**: `ghcr.io/aimeerivers/watchthis-home-service:latest`
 - **watchthis-user-service**: `ghcr.io/aimeerivers/watchthis-user-service:latest`
+- **watchthis-media-service**: `ghcr.io/aimeerivers/watchthis-media-service:latest`
+- **watchthis-sharing-service**: `ghcr.io/aimeerivers/watchthis-sharing-service:latest`
 
 These images are automatically built and published when changes are merged to the main branch of each service repository.
 
@@ -191,7 +194,7 @@ The project uses different environment files for different contexts:
 
 ### Troubleshooting
 
-- **Services not starting**: Check `docker-compose logs` for startup errors
+- **Services not starting**: Check `npm run docker:logs` for startup errors
 - **Network connectivity**: Ensure all services are on the same Docker network
 - **Database initialization**: Services may need time to set up databases
 - **Port conflicts**: Ensure required ports are not in use by other applications

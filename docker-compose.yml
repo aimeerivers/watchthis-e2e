@@ -38,7 +38,7 @@ services:
     networks:
       - watchthis-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U watchthis -d user-service"]
+      test: ["CMD-SHELL", "pg_isready -U watchthis -d watchthis_user"]
       interval: 10s
       timeout: 5s
       retries: 5

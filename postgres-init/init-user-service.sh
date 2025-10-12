@@ -4,8 +4,6 @@ set -e
 echo "🔧 Initializing PostgreSQL database for user-service..."
 
 # Create admin user in the user-service database
-# The password hash corresponds to the same password as in the MongoDB init script
-# $2b$10$Y3TyKRUr3W8u/dCw2826fu.v6xMWy/XAd/AA608USjnFO/IuQ.xm2 (bcrypt hash)
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     -- Create users table if it doesn't exist

@@ -1,11 +1,11 @@
 services:
-  # MongoDB database for user service
+  # MongoDB database for media and sharing services
   mongodb:
     image: mongo:6.0
     container_name: watchthis-mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_DATABASE: user-service
+      MONGO_INITDB_DATABASE: media-service
     ports:
       - "27018:27017"
     volumes:
@@ -16,6 +16,29 @@ services:
       - watchthis-network
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL database for user service
+  postgresql:
+    image: postgres:16
+    container_name: watchthis-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: watchthis_user
+      POSTGRES_USER: watchthis
+      POSTGRES_PASSWORD: watchthis_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    tmpfs:
+      - /var/lib/postgresql/data # Use tmpfs for ephemeral data storage
+    networks:
+      - watchthis-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U watchthis -d user-service"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -128,8 +151,8 @@ services:
       PORT: 8583
       NODE_ENV: development
 
-      # Database Configuration - using container name (internal port still 27017)
-      MONGO_URL: mongodb://mongodb:27017/user-service
+      # Database Configuration - using container name (internal port still 5432)
+      DATABASE_URL: postgresql://watchthis:watchthis_dev@postgresql:5432/watchthis_user
 
       # Session Configuration
       SESSION_SECRET: test-session-secret-for-e2e-testing
@@ -138,10 +161,11 @@ services:
       JWT_SECRET: test-jwt-secret-key-for-e2e-testing-make-it-long-and-secure
       JWT_EXPIRES_IN: 24h
       JWT_REFRESH_EXPIRES_IN: 7d
+    command: ["sh", "-c", "npm run database:setup && npm start"]
     networks:
       - watchthis-network
     depends_on:
-      mongodb:
+      postgresql:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8583/health"]

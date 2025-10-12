@@ -19,13 +19,6 @@ Feature: Media Service
     And the results should include pagination information
 
   @wip
-  Scenario: Update media metadata
-    Given a user has created a media item
-    When they update the media's title and description
-    Then the metadata should be updated successfully
-    And the URL should remain unchanged
-
-  @wip
   Scenario: Extract metadata preview from URL
     Given a user provides a valid media URL
     When they request metadata extraction preview

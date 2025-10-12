@@ -75,8 +75,13 @@ case "$1" in
     ;;
 
   "build")
-    echo "🔨 Building services locally..."
-    docker compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache
+    if [ -n "$2" ]; then
+      echo "🔨 Building service '$2' locally..."
+      docker compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache "$2"
+    else
+      echo "🔨 Building all services locally..."
+      docker compose -f docker-compose.yml -f docker-compose.local.yml build --no-cache
+    fi
     ;;
     
   *)
@@ -90,7 +95,7 @@ case "$1" in
     echo ""
     echo "Local Development Commands:"
     echo "  dev          - Start services using local builds"
-    echo "  build        - Build services from local source code"
+    echo "  build        - Build services from local source code (optionally specify service name)"
     echo ""
     echo "General Commands:"
     echo "  down         - Stop all services"
@@ -103,6 +108,8 @@ case "$1" in
     echo "Examples:"
     echo "  $0 up                              # Use published images"
     echo "  $0 dev                             # Use local builds"
+    echo "  $0 build                           # Build all services locally"
+    echo "  $0 build watchthis-user-service    # Build only user service"
     echo "  $0 pull                            # Update to latest images"
     echo "  $0 logs watchthis-user-service     # View specific service logs"
     echo "  $0 status                          # Check service health"

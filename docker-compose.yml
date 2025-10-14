@@ -1,5 +1,5 @@
 services:
-  # MongoDB database for media and sharing services
+  # MongoDB database for sharing service
   mongodb:
     image: mongo:6.0
     container_name: watchthis-mongodb
@@ -20,13 +20,13 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL database for user service
+  # PostgreSQL database for user and media services
   postgresql:
     image: postgres:16
     container_name: watchthis-postgresql
     restart: unless-stopped
     environment:
-      POSTGRES_DB: watchthis_user
+      POSTGRES_DB: watchthis
       POSTGRES_USER: watchthis
       POSTGRES_PASSWORD: watchthis_dev
     ports:
@@ -38,7 +38,7 @@ services:
     networks:
       - watchthis-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U watchthis -d watchthis_user"]
+      test: ["CMD-SHELL", "pg_isready -U watchthis -d watchthis"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -83,15 +83,16 @@ services:
       BASE_URL: http://localhost:7769
       NODE_ENV: development
 
-      # Database Configuration - using container name (internal port still 27017)
-      MONGO_URL: mongodb://mongodb:27017/media-service
+      # Database Configuration - using container name (internal port still 5432)
+      DATABASE_URL: postgresql://watchthis:watchthis_dev@postgresql:5432/watchthis_media
 
       # Service URLs - using container names for internal communication
       USER_SERVICE_URL: http://watchthis-user-service:8583
+    command: ["sh", "-c", "npm run database:setup && npm start"]
     networks:
       - watchthis-network
     depends_on:
-      mongodb:
+      postgresql:
         condition: service_healthy
       watchthis-user-service:
         condition: service_healthy

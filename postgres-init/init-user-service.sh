@@ -3,9 +3,12 @@ set -e
 
 echo "🔧 Initializing PostgreSQL database for user-service..."
 
-# Create admin user in the user-service database
-
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    -- Create database
+    CREATE DATABASE watchthis_user WITH OWNER watchthis;
+
+    \c watchthis_user;
+
     -- Create users table if it doesn't exist
     CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

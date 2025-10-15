@@ -1,26 +1,5 @@
 services:
-  # MongoDB database for sharing service
-  mongodb:
-    image: mongo:6.0
-    container_name: watchthis-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_DATABASE: media-service
-    ports:
-      - "27018:27017"
-    volumes:
-      - ./mongo-init:/docker-entrypoint-initdb.d
-    tmpfs:
-      - /data/db # Use tmpfs for ephemeral data storage
-    networks:
-      - watchthis-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # PostgreSQL database for user and media services
+  # PostgreSQL database for all services
   postgresql:
     image: postgres:16
     container_name: watchthis-postgresql
@@ -110,17 +89,18 @@ services:
       BASE_URL: http://localhost:8372
       NODE_ENV: development
 
-      # Database Configuration - using container name (internal port still 27017)
-      MONGO_URL: mongodb://mongodb:27017/sharing-service
+      # Database Configuration - using container name (internal port still 5432)
+      DATABASE_URL: postgresql://watchthis:watchthis_dev@postgresql:5432/watchthis_sharing
 
       # Service URLs - using container names for internal communication
       HOME_SERVICE_URL: http://watchthis-home-service:7279
       MEDIA_SERVICE_URL: http://watchthis-media-service:7769
       USER_SERVICE_URL: http://watchthis-user-service:8583
+    command: ["sh", "-c", "npm run database:setup && npm start"]
     networks:
       - watchthis-network
     depends_on:
-      mongodb:
+      postgresql:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8372/health"]
